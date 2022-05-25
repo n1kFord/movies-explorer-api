@@ -1,2 +1,2 @@
 # movies-explorer-api
-###[api](https://api.praktikumdiploma.nomoredomains.xyz/)
+### [api](https://api.praktikumdiploma.nomoredomains.xyz/)
