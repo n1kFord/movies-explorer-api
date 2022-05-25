@@ -47,7 +47,6 @@ module.exports.createMovie = (req, res, next) => {
 };
 
 module.exports.deleteMovieById = (req, res, next) => {
-  console.log(req.params._id);
   Movie.findById(req.params._id)
     .then((movieInfo) => {
       if (movieInfo === null) {

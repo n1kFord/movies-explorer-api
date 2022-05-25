@@ -52,9 +52,8 @@ module.exports.getCurrentUser = (req, res, next) => {
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Ошибка: Пользователь с указанным идентификатором не найден');
-      } else {
-        res.send({ data: user });
       }
+      res.send({ data: user });
     })
     .catch(next);
 };
