@@ -43,7 +43,13 @@ module.exports.changeUserInfo = (req, res, next) => {
   } else {
     User.findByIdAndUpdate(req.user._id, { email: `${email}`, name: `${name}` }, { new: true, runValidators: true, upsert: false })
       .then((user) => res.send({ data: user }))
-      .catch(next);
+      .catch((err) => {
+        if (err.code === 11000) {
+          next(new ConflictError('Ошибка: пользователь с таким e-mail уже существует.'));
+        } else {
+          next(err);
+        }
+      });
   }
 };
 

@@ -7,8 +7,8 @@ const {
   changeUserInfo, getCurrentUser,
 } = require('../controllers/users');
 
-router.get('/me', getCurrentUser);
-router.patch('/me', celebrate({
+router.get('/users/me', getCurrentUser);
+router.patch('/users/me', celebrate({
   body: Joi.object().keys({
     email: Joi.string().email().required(),
     name: Joi.string().min(2).max(30).required(),

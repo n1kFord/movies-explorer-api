@@ -3,22 +3,21 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const {
-  celebrate, Joi, errors,
+  errors,
 } = require('celebrate');
-const auth = require('./middlewares/auth');
+const rateLimit = require('express-rate-limit');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const NotFoundError = require('./errors/not-found-error');
 
-const { createUser, login } = require('./controllers/users');
+require('dotenv').config();
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3000, BASE_LINK } = process.env;
 
 const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose.connect('mongodb://localhost:27017/diploma', {
+mongoose.connect(BASE_LINK, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -39,38 +38,21 @@ app.use((req, res, next) => {
   return next();
 });
 
-app.post('/signup', celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().min(2).max(30).default('Джон'),
-    email: Joi.string().email().required(),
-    password: Joi.string().required(),
+app.use(
+  rateLimit({
+    windowMs: 12 * 60 * 60 * 1000,
+    max: 100,
+    message: 'Вы превысили количество запросов за 12 часов!',
+    headers: true,
   }),
-}), createUser);
+);
 
-app.post('/signin', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().email().required(),
-    password: Joi.string().required(),
-  }),
-}), login);
-
-app.use(auth);
-
-app.use('/users', require('./routes/users'));
-app.use('/movies', require('./routes/movies'));
-
-app.use('*', (req, res, next) => {
-  next(new NotFoundError('Ошибка: данный ресурс не найден.'));
-});
+app.use(require('./routes/index')); // все роуты
 
 app.use(errorLogger);
 
 app.use(errors());
 
-app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
-  res.status(statusCode).send({ message: statusCode === 500 ? 'Ошибка: что-то пошло не так.' : message });
-  next();
-});
+app.use(require('./middlewares/error-handler')); // централизованный обработчик ошибок
 
 app.listen(PORT);

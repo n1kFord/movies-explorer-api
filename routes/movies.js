@@ -8,8 +8,8 @@ const {
   getMovies, createMovie, deleteMovieById,
 } = require('../controllers/movies');
 
-router.get('/', getMovies);
-router.post('/', celebrate({
+router.get('/movies', getMovies);
+router.post('/movies', celebrate({
   body: Joi.object().keys({
     country: Joi.string().required(),
     director: Joi.string().required(),
@@ -19,14 +19,14 @@ router.post('/', celebrate({
     image: Joi.string().regex(linkRegexp).required(),
     trailerLink: Joi.string().regex(linkRegexp).required(),
     thumbnail: Joi.string().regex(linkRegexp).required(),
-    movieId: Joi.string().required(),
+    movieId: Joi.number().required(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
   }),
 }), createMovie);
-router.delete('/:_id', celebrate({
+router.delete('/movies/:_id', celebrate({
   params: Joi.object().keys({
-    _id: Joi.string().required(),
+    _id: Joi.string().hex().length(24),
   }),
 }), deleteMovieById);
 
