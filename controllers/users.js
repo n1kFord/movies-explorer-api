@@ -14,26 +14,22 @@ module.exports.createUser = (req, res, next) => {
   const {
     name, email, password,
   } = req.body;
-  if (!validator.isEmail(email) || !password) {
-    next(new BadRequestError('Ошибка: данные переданы неккоректно.'));
-  } else {
-    bcrypt.hash(password, 10)
-      .then((hash) => User.create({
-        name, email, password: hash,
-      }))
-      .then((user) => {
-        res.send({
-          name: user.name, email: user.email,
-        });
-      })
-      .catch((err) => {
-        if (err.code === 11000) {
-          next(new ConflictError('Ошибка: пользователь с таким e-mail уже существует.'));
-        } else {
-          next(err);
-        }
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create({
+      name, email, password: hash,
+    }))
+    .then((user) => {
+      res.send({
+        name: user.name, email: user.email,
       });
-  }
+    })
+    .catch((err) => {
+      if (err.code === 11000) {
+        next(new ConflictError('Ошибка: пользователь с таким e-mail уже существует.'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports.changeUserInfo = (req, res, next) => {
