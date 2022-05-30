@@ -10,8 +10,7 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 require('dotenv').config();
 
-const { PORT = 3000, BASE_LINK } = process.env;
-
+const { PORT = 3000, BASE_LINK = 'mongodb://localhost:27017/moviesdb' } = process.env; // берет с .env если файл существует
 const app = express();
 
 app.use(bodyParser.json());
