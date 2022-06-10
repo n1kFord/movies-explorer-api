@@ -40,7 +40,7 @@ app.use((req, res, next) => {
 app.use(
   rateLimit({
     windowMs: 12 * 60 * 60 * 1000,
-    max: 100,
+    max: 2000,
     message: 'Вы превысили количество запросов за 12 часов!',
     headers: true,
   }),
