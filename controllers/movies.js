@@ -53,8 +53,8 @@ module.exports.deleteMovieById = (req, res, next) => {
         throw new NotFoundError('Ошибка: Фильм с указанным идентификатором не найден');
       } else if (movieInfo.owner.toString() === req.user._id) {
         Movie.findByIdAndRemove(req.params._id)
-          .then(() => {
-            res.send({ message: 'Фильм успешно удален.' });
+          .then((data) => {
+            res.send({ data });
           })
           .catch(next);
       } else {
