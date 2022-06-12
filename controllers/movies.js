@@ -39,6 +39,8 @@ module.exports.createMovie = (req, res, next) => {
       .catch((err) => {
         if (err.code === 11000) {
           next(new ConflictError('Ошибка: фильм с таким id уже существует.'));
+        } else if (err.name === 'ValidationError') {
+          next(new Error(`Ошибка валидации: ${err.message}`));
         } else {
           next(err);
         }
